@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { NextResponse } from 'next/server';
+import { clerkClient, currentUser } from '@clerk/nextjs';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -11,10 +12,27 @@ const openai = new OpenAI({
 export const runtime = 'edge';
 
 export async function POST(req: Request) {
+  console.log('app/api/chat.ts route called');
+
   try {
     if (!process.env.OPENAI_API_KEY) {
       return new NextResponse('Missing OpenAI API key', { status: 400 });
     }
+
+    const user = await currentUser();
+    if (!user) {
+      return new NextResponse('Please sign in', { status: 401 });
+    }
+
+    const credits = Number(user.publicMetadata.credits || 0);
+    if (!credits) {
+      // return new NextResponse('You have no credits left', { status: 402 });
+      return NextResponse.json(
+        { error: 'You have no credits left' },
+        { status: 402 }
+      );
+    }
+
     const { messages } = await req.json();
     // Ask OpenAI for a streaming chat completion given the prompt
     const response = await openai.chat.completions.create({
@@ -25,6 +43,11 @@ export async function POST(req: Request) {
 
     // Convert the response into a friendly text-stream
     const stream = OpenAIStream(response);
+    await clerkClient.users.updateUserMetadata(user.id, {
+      publicMetadata: {
+        credits: credits - 1,
+      },
+    });
     // Respond with the stream
     return new StreamingTextResponse(stream);
   } catch (error: any) {

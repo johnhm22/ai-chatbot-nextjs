@@ -4,7 +4,7 @@ import { CheckIcon, CopyIcon } from 'lucide-react';
 
 import { useClipboard } from '@/app/hooks/use-clipboard';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/Button';
+import { Button } from '../components/ui/Button';
 
 interface Message {
   content: string;

@@ -1,16 +1,27 @@
 'use client';
 
 import { useChat } from 'ai/react';
-import { useEffect, useRef } from 'react';
-import { SendHorizonalIcon } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { SendHorizonalIcon, Zap } from 'lucide-react';
+import { toast } from 'sonner';
 
 import Input from './ui/Input';
 import { Button } from './ui/Button';
 import { ScrollArea } from './ui/ScrollArea';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/Avatar';
 import CopyToClipboard from './CopyToClipboard';
+import { useUser, useClerk } from '@clerk/nextjs';
+import { AddFreeCredits } from '@/lib/actions';
+import { SubscriptionDialog } from './subscription-dialog';
 
 export default function Chat() {
+  const { isLoaded, isSignedIn, user } = useUser();
+  const { openSignIn, session } = useClerk();
+
+  const credits = user?.publicMetadata?.credits;
+  const newUser = typeof credits === 'undefined';
+  const paidUser = user?.publicMetadata?.stripeCustomerId;
+
   const ref = useRef<HTMLDivElement>(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
     useChat({
@@ -22,25 +33,91 @@ export default function Chat() {
           content: 'You are an assistant that gives short answers',
         },
       ],
+      onResponse: (response) => {
+        if (!response.ok) {
+          const status = response.status;
+
+          switch (status) {
+            case 401:
+              openSignIn();
+              break;
+            case 402:
+              toast.error('You have no more credits remaining', {});
+              break;
+            default:
+              toast.error(error?.message || 'Apologies, something went wrong');
+          }
+        }
+      },
     });
 
-  console.log('messages: ', messages);
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] =
+    useState<Boolean>(false);
 
   useEffect(() => {
     if (ref.current === null) return;
     ref.current.scrollTo(0, ref.current.scrollHeight);
   });
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSignedIn) {
+      handleSubmit(e);
+    } else {
+      openSignIn();
+    }
+  };
+  const handleClick = async () => {
+    const { success, error } = await AddFreeCredits();
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    toast.success('10 credits added successfully');
+    session?.reload();
+  };
+
+  console.log('isSignedIn: ', isSignedIn);
+  console.log('!paidUser: ', !paidUser);
+  console.log('!newUser: ', !newUser);
+
   return (
     <section className='text-zinc-700'>
-      <div className='container flex h-screen flex-col items-center justify-center'>
-        <h1 className='font-serif text-2xl font-medium'>AI Chatbot</h1>
+      {/* <div className='container flex h-screen flex-col items-center justify-center border border-blue-500'> */}
+      <div className='container max-w-lg'>
+        <div className='mx-auto flex flex-row justify-between px-1'>
+          <h1 className='font-serif text-2xl font-medium'>AI Chatbot</h1>
+          {isSignedIn && newUser && (
+            <Button
+              size='sm'
+              variant='outline'
+              className='border-emerald-500'
+              onClick={handleClick}
+            >
+              Redeem 10 free credits
+            </Button>
+          )}
+          {isSignedIn && typeof credits === 'number' && (
+            <div className='flex items-center gap-2'>
+              <Zap className='h-5 w-5 text-emerald-500' />
+              <span className='text-sm text-zinc-500'>Credits</span>
+              <span className='font-medium'>{credits}</span>
+            </div>
+          )}
+
+          {isSignedIn && !paidUser && !newUser && (
+            <Button
+              size='sm'
+              variant='secondary'
+              onClick={() => setSubscriptionDialogOpen(true)}
+            >
+              Get more credits
+            </Button>
+          )}
+        </div>
         <div className='mt-4 w-full max-w-lg'>
           {/*response container */}
-          <ScrollArea className='mb-2 h-[500px] rounded-md p-4' ref={ref}>
-            {error && (
-              <div className='text-sm text-red-400'>{error.message}</div>
-            )}
+          <ScrollArea className='mb-2 h-[400px] rounded-md' ref={ref}>
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -85,11 +162,13 @@ export default function Chat() {
               </div>
             ))}
           </ScrollArea>
-          <form onSubmit={handleSubmit} className='relative'>
+          <form onSubmit={onSubmit} className='relative'>
             <Input
               value={input}
               onChange={handleInputChange}
-              placeholder='Ask me anything...'
+              placeholder={
+                isSignedIn ? 'Ask me anything...' : 'Sign in to start'
+              }
               className='pr-12 placeholder:italic placeholder:text-zinc-600'
             />
             <Button
@@ -103,6 +182,10 @@ export default function Chat() {
             </Button>
           </form>
         </div>
+        <SubscriptionDialog
+          open={subscriptionDialogOpen}
+          onOpenChnage={setSubscriptionDialogOpen}
+        />
       </div>
     </section>
   );
