@@ -12,8 +12,6 @@ const openai = new OpenAI({
 export const runtime = 'edge';
 
 export async function POST(req: Request) {
-  console.log('app/api/chat.ts route called');
-
   try {
     if (!process.env.OPENAI_API_KEY) {
       return new NextResponse('Missing OpenAI API key', { status: 400 });
@@ -26,7 +24,6 @@ export async function POST(req: Request) {
 
     const credits = Number(user.publicMetadata.credits || 0);
     if (!credits) {
-      // return new NextResponse('You have no credits left', { status: 402 });
       return NextResponse.json(
         { error: 'You have no credits left' },
         { status: 402 }

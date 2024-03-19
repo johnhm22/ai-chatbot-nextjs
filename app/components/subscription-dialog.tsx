@@ -43,10 +43,6 @@ export const SubscriptionDialog = (
         lineItems
       );
 
-      console.log('**********************');
-      console.log('sessionId: ', sessionId);
-      console.log('**********************');
-
       if (!sessionId || checkoutError) {
         throw new Error(checkoutError || 'Failed to create a checkout session');
       }

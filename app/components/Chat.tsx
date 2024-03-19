@@ -18,6 +18,9 @@ export default function Chat() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { openSignIn, session } = useClerk();
 
+  console.log('session: ', session);
+  console.log('useUser(): ', useUser());
+
   const credits = user?.publicMetadata?.credits;
   const newUser = typeof credits === 'undefined';
   const paidUser = user?.publicMetadata?.stripeCustomerId;
@@ -77,13 +80,8 @@ export default function Chat() {
     session?.reload();
   };
 
-  console.log('isSignedIn: ', isSignedIn);
-  console.log('!paidUser: ', !paidUser);
-  console.log('!newUser: ', !newUser);
-
   return (
     <section className='text-zinc-700'>
-      {/* <div className='container flex h-screen flex-col items-center justify-center border border-blue-500'> */}
       <div className='container max-w-lg'>
         <div className='mx-auto flex flex-row justify-between px-1'>
           <h1 className='font-serif text-2xl font-medium'>AI Chatbot</h1>
