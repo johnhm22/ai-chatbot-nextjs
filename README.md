@@ -38,19 +38,31 @@ A number of helpers/methods are made available by Clerk.
 
 The authMiddleware helper is exported from a middleware.ts file. In this file we can define which routes we want Clerk to check for authorisation credentials.  So, for these routes, a user who is not signed in is blocked by authMiddleware from accessing them.  
 
-In this app, we are using the following from Clerk:  
+In this app, we following from Clerk are used:  
 * The SignInButton which, when clicked, takes the user to the sign-in page or presents a sign-in modal. In this app, we have customised the SignInButton component by using it to wrap our own Button component.  
-* SignedIn 
-* SignedOut
+* SignedIn - this is a useful component that checks the authentication of a user. Children wrapped by SignedIn will only be rendered if the user has an active session. So ideal for displaying the appropriate menu in a header.  
+* SignedOut -  similar to the SignedIn component, but only renders children if the user is not signed in.
 * UserButton
 * clerkClient  
 By calling clerkClient.users user data is exposed and can be interrogated and updated.  
-In the app, clerkClient.users.updateUserMetaData() is employed to update data held about the user.  Here, updateUserMetaData is used to manage the number of credits held by the user, for example decreasing the credits for each AI question.  
+In the app, clerkClient.users.updateUserMetaData() is employed to update data held about the user.  As an example, updateUserMetaData is used to manage the number of credits held by the user; decreasing the credits for each AI question and holding Stripe payment details are two uses.   
 * currentUser - this is a helper that returns an object with the current user details. It is asynchronous and needs to be called with await and the returned object saved in a constant
 * useClerk - the following two helpers can be destrucutred when calling useClerk()  
 openSignIn - this will open the SignIn component
-session - this object contains information about the current user session. There are a number of properties such as a unique id for a particular session and also status which has several properties, for example active, expired, ended etc.  
-* useUser
+session - this is destructured from useClerk(). It is an object containing information about the current user session. There are a number of properties such as a unique id for a particular session and also status which has several properties, for example active, expired, ended etc.
+
+This is the session printed to the console:  
+ ![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/28d0153a-ccb9-483a-aafd-db7543062e75)  
+
+* useUser - as the clear docs say, a hook that is "a convenient way to access the current User data where you need it."
+
+When not signed-in
+* ![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/559159a7-fdfd-4d72-beab-df3557cf31a5)
+
+When signed-in
+* ![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/cbd80364-4f81-4820-bc65-ca6899d70e39)  
+
+
 
 
 
