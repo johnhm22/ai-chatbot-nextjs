@@ -42,7 +42,10 @@ In this app, we following from Clerk are used:
 * The SignInButton which, when clicked, takes the user to the sign-in page or presents a sign-in modal. In this app, we have customised the SignInButton component by using it to wrap our own Button component.  
 * SignedIn - this is a useful component that checks the authentication of a user. Children wrapped by SignedIn will only be rendered if the user has an active session. So ideal for displaying the appropriate menu in a header.  
 * SignedOut -  similar to the SignedIn component, but only renders children if the user is not signed in.
-* UserButton
+* UserButton - As the Clerk docs state, this is a component that "is used to render the familiar user button UI popularized by Google." It can take various properties, for example, here afterSignOutURL is used which provides the url to which the app navigates after sign-out
+
+![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/0e147dd3-c250-452b-9245-f6468dcec822)  
+
 * clerkClient  
 By calling clerkClient.users user data is exposed and can be interrogated and updated.  
 In the app, clerkClient.users.updateUserMetaData() is employed to update data held about the user.  As an example, updateUserMetaData is used to manage the number of credits held by the user; decreasing the credits for each AI question and holding Stripe payment details are two uses.   
@@ -57,16 +60,10 @@ This is the session printed to the console:
 * useUser - as the clear docs say, a hook that is "a convenient way to access the current User data where you need it."
 
 When not signed-in
-* ![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/559159a7-fdfd-4d72-beab-df3557cf31a5)
+![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/559159a7-fdfd-4d72-beab-df3557cf31a5)
 
 When signed-in
-* ![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/cbd80364-4f81-4820-bc65-ca6899d70e39)  
-
-
-
-
-
-
+![image](https://github.com/johnhm22/ai-chatbot-nextjs/assets/71333679/cbd80364-4f81-4820-bc65-ca6899d70e39)  
 
 
 
