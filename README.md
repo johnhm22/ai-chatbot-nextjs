@@ -9,7 +9,8 @@ TypeScript
 Tailwindcss  
 Useful component libraries - [shadcn/ui](https://ui.shadcn.com/) which gets some its components from [radix UI](https://www.radix-ui.com/)  
 [Clerk](https://clerk.com/docs) for authentication and management of users  
-useChat hook from [Vercel AI SDK](https://sdk.vercel.ai/docs/api-reference/use-chat#usechat) which allows us to work with AI models
+useChat hook from [Vercel AI SDK](https://sdk.vercel.ai/docs/api-reference/use-chat#usechat) which allows us to work with AI models  
+[OpenAI text generation model](https://platform.openai.com/docs/guides/text-generation)
 
 ### Reference  
 Hamed Bahram - author of some greate tutorials  
