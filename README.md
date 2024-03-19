@@ -7,7 +7,8 @@ In the large window above, the back-and-forth conversation between user and Open
 NextJS v14  
 TypeScript  
 Tailwindcss  
-Useful component libraries - [shadcn/ui](https://ui.shadcn.com/) which gets some its components from [radix UI](https://www.radix-ui.com/) 
+Useful component libraries - [shadcn/ui](https://ui.shadcn.com/) which gets some its components from [radix UI](https://www.radix-ui.com/)  
+[Clerk](https://clerk.com/docs) for authentication and management of users
 
 ### Reference  
 Hamed Bahram - author of some greate tutorials  
